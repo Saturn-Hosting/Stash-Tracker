@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./stash_tracker.db:/app/stash_tracker.db
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: ["sh", "-c", "pip install -r requirements.txt && python main.py"]
