@@ -141,4 +141,18 @@ def update_item(item_id: int, item: Item, db=Depends(get_db)):
     
     return {"message": "Item updated successfully", "id": item_id, **item.dict()}
 
+# add a endpoint which returns the total count of a given minecraft id
+@app.get("/items/count/{minecraft_item}")
+def get_item_count(minecraft_item: str, db=Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute("SELECT SUM(count) FROM item WHERE minecraft_item = ?", (minecraft_item,))
+    return {"count": cursor.fetchone()[0]}
+
+# endpoint which returns total count of kits at a stash
+@app.get("/kits/count/{stash_id}")
+def get_kit_count(stash_id: int, db=Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute("SELECT SUM(count) FROM item WHERE kit_id IN (SELECT id FROM kit WHERE stash_id = ?)", (stash_id,))
+    return {"count": cursor.fetchone()[0]}
+
 uvicorn.run(app, host="0.0.0.0", port=8000)
