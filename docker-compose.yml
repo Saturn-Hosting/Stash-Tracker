@@ -1,12 +1,28 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  api:
-    build: .
+  fastapi_app:
+    image: python:3.9-slim
+    container_name: Stash-Tracker
     ports:
       - "8000:8000"
     volumes:
-      - ./stash_tracker.db:/app/stash_tracker.db
+      - .:/app
+    working_dir: /app
+    command: >
+      bash -c "
+        pip install --no-cache-dir -r requirements.txt &&
+        uvicorn main:app --host 0.0.0.0 --port 8000
+      "
     environment:
       - PYTHONUNBUFFERED=1
-    command: ["sh", "-c", "pip install -r requirements.txt && python main.py"]
+    depends_on:
+      - db
+
+  db:
+    image: nouchka/sqlite3
+    container_name: sqlite-db
+    volumes:
+      - ./stash_tracker.db:/app/stash_tracker.db
+    environment:
+      - SQLITE_DATABASE_FILE=/app/stash_tracker.db
