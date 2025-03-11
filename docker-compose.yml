@@ -18,11 +18,3 @@ services:
       - PYTHONUNBUFFERED=1
     depends_on:
       - db
-
-  db:
-    image: nouchka/sqlite3
-    container_name: sqlite-db
-    volumes:
-      - ./stash_tracker.db:/app/stash_tracker.db
-    environment:
-      - SQLITE_DATABASE_FILE=/app/stash_tracker.db
